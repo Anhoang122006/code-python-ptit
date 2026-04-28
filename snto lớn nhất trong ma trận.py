@@ -27,7 +27,8 @@ def solve():
     for i in range(n):
       for j in range(m):
         if a[i][j]==max_prime:
-          print(f"Vi tri [{i}][{j}]")
+           print(f"Vi tri [{i}][{j}]")
+
 
 if __name__ == '__main__':
     solve()
