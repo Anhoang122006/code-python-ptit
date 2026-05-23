@@ -1,48 +1,60 @@
-import sys
-
-
 def solve():
-    # 1. Đọc dữ liệu
-    input_data = sys.stdin.read().split()
-    if not input_data: return
+    # 1. Đọc dữ liệu bằng input()
+    # (Đề bài cho biết dòng 1 là N, dòng 2 là M)
+    n_str = input().strip()
+    if not n_str:
+        return
+    N = int(n_str)
+    M = int(input().strip())
 
-    N = int(input_data[0])
-    M = int(input_data[1])
-
-    # Dùng Ma trận kề để kiểm tra kết nối siêu tốc O(1)
-    # adj[i][j] = True nghĩa là i và j có cạnh nối
-    adj = [[False] * (N + 1) for _ in range(N + 1)]
-
-    # Bảng đếm số bậc (số bạn bè) của mỗi đỉnh
-    degree = [0] * (N + 1)
-
-    idx = 2
+    # 2. Xây dựng bản đồ (Danh sách kề)
+    adj = [[] for _ in range(N + 1)]
     for _ in range(M):
-        u = int(input_data[idx])
-        v = int(input_data[idx + 1])
-        adj[u][v] = adj[v][u] = True
-        degree[u] += 1
-        degree[v] += 1
-        idx += 2
+        u, v = map(int, input().split())
+        adj[u].append(v)
+        adj[v].append(u)
 
-    # 2. KIỂM TRA TỪNG ĐỈNH X
-    # Thử giả sử đỉnh i là đỉnh được chọn để thực hiện thao tác
+    # Sổ đánh dấu những người đã đếm
+    visited = [False] * (N + 1)
+    kich_thuoc_nhom = [] # Lưu số lượng người của từng nhóm
+
+    # 3. QUÉT TÌM CÁC NHÓM
     for i in range(1, N + 1):
-        # Sau khi đảo cạnh của i:
-        # Số cạnh mới của i sẽ là (N - 1) - degree[i]
-        # Tổng số cạnh của toàn đồ thị sau khi thao tác với i:
-        # Tổng = (M - degree[i]) + [(N - 1) - degree[i]]
+        if not visited[i]:
+            # Phát hiện một nhóm mới!
+            size = 0
+            stack = [i]
+            visited[i] = True
 
-        moi_quan_he_moi = (N - 1) - degree[i]
-        tong_canh_sau_khi_dao = M - degree[i] + moi_quan_he_moi
+            # Khám phá xem nhóm này có bao nhiêu người
+            while stack:
+                curr = stack.pop()
+                size += 1
 
-        # ĐIỀU KIỆN CẦN: Một đồ thị đầy đủ N đỉnh luôn có đúng N*(N-1)/2 cạnh
-        if tong_canh_sau_khi_dao == N * (N - 1) // 2:
+                for hang_xom in adj[curr]:
+                    if not visited[hang_xom]:
+                        visited[hang_xom] = True
+                        stack.append(hang_xom)
+
+            kich_thuoc_nhom.append(size)
+
+    # 4. CHỐT KẾT QUẢ THEO TOÁN HỌC
+    # Phải có đúng 2 nhóm riêng biệt
+    if len(kich_thuoc_nhom) == 2:
+        s1 = kich_thuoc_nhom[0]
+        s2 = kich_thuoc_nhom[1]
+
+        # Sức chứa tối đa của 2 nhóm này
+        so_canh_toi_da = (s1 * (s1 - 1) // 2) + (s2 * (s2 - 1) // 2)
+
+        # Nếu số cạnh thực tế đúng bằng sức chứa tối đa -> Nó là đồ thị hoàn hảo
+        if M == so_canh_toi_da:
             print("YES")
-            return
+        else:
+            print("NO")
+    else:
+        print("NO")
 
-    print("NO")
-
-
+# Kích hoạt
 if __name__ == '__main__':
     solve()

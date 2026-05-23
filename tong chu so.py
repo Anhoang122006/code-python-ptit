@@ -1,26 +1,36 @@
-def solve_tong_chu_so():
-    # Đọc số N dưới dạng chuỗi vì nó có thể dài tới 100.000 chữ số
-    n_str = input().strip()
+def solve():
+    # Lấy dữ liệu an toàn trên 1 dòng, loại bỏ khoảng trắng thừa
+    s = input().strip()
 
-    # Trường hợp đặc biệt: Nếu số N chỉ có 1 chữ số ngay từ đầu
-    if len(n_str) == 1:
-        print(1) # Theo ví dụ: số 6 mất 1 bước để "chỉ còn duy nhất 1 chữ số"
+    if not s:
         return
 
-    buoc = 0
-    while len(n_str) > 1:
+    # Xử lý ngoại lệ theo đúng ví dụ 3 của đề bài
+    if len(s) == 1:
+        print(1)
+        return
+
+    steps = 0
+
+    # Lặp cho đến khi chiều dài chuỗi chỉ còn duy nhất 1 ký tự
+    while len(s) > 1:
         tong = 0
-        # Duyệt từng ký tự chữ số trong chuỗi để tính tổng
-        for chu_so in n_str:
-            if chu_so == '-': # Bỏ qua dấu âm nếu có
-                continue
-            tong += int(chu_so)
 
-        # Cập nhật n_str thành chuỗi của tổng mới để lặp lại
-        n_str = str(tong)
-        buoc += 1
+        # Duyệt qua từng ký tự trong chuỗi
+        for char in s:
+            # Mô phỏng lại chính xác lỗi ép kiểu ký tự của C++
+            # Ký tự '-' (ASCII 45) trừ đi '0' (ASCII 48) sẽ tự động biến thành -3
+            tong += ord(char) - ord('0')
 
-    print(buoc)
+        # Biến tổng mới tính được thành chuỗi để kiểm tra chiều dài cho vòng lặp tiếp theo
+        s = str(tong)
 
-if __name__=="__main__":
-   solve_tong_chu_so()
+        # Ghi sổ 1 bước
+        steps += 1
+
+    # In ra tổng số bước
+    print(steps)
+
+# Kích hoạt chương trình
+if __name__ == '__main__':
+    solve()
